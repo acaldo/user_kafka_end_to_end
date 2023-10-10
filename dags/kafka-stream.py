@@ -5,7 +5,7 @@ from airflow.operators.python import PythonOperator
 
 default_args = {
     'owner': 'caldev',
-    'start_dat': datetime(2024, 9, 1, 10, 00)
+    'start_date': datetime(2022, 9, 1, 10, 00)
 }
 
 
@@ -43,10 +43,10 @@ def stream_data():
     import time
     res = get_data()
     res = format_data(res)
-    # print(json.dumps(res, indent=3))
+    print(json.dumps(res, indent=3))
 
     producer = KafkaProducer(
-        bootstrap_servers=['localhost:9092'],
+        bootstrap_servers=['broker:29092'],
         max_block_ms=5000,
 
     )
@@ -54,16 +54,16 @@ def stream_data():
     producer.send('users_created', json.dumps(res).encode('utf-8'))
 
 
-""" with DAG(
+with DAG(
     dag_id='user_automation',
     default_args=default_args,
-    schedule_interval='@daily',
+    schedule='@daily',
     catchup=False
 ) as dag:
     streaming_task = PythonOperator(
         task_id='stream_data_from_api',
         python_callable=stream_data
     )
- """
+
 
 # stream_data()
