@@ -26,6 +26,7 @@ def create_table(session):
         post_code TEXT,
         email TEXT,
         username TEXT,
+        dob TEXT,
         registered_date TEXT,
         phone TEXT,
         picture TEXT);
@@ -122,13 +123,15 @@ def create_selection_df_from_kafka(spark_df):
         StructField("post_code", StringType(), False),
         StructField("email", StringType(), False),
         StructField("username", StringType(), False),
+        StructField("dob", StringType(), False),
         StructField("registered_date", StringType(), False),
         StructField("phone", StringType(), False),
         StructField("picture", StringType(), False)
     ])
+    print(schema)
 
-    sel = spark_df.selectExpr("CAST(value AS STRING)") \
-        .select(from_json(col('value'), schema).alias('data')).select("data.*")
+    sel = spark_df.selectExpr("CAST(value AS STRING)").select(
+        from_json(col('value'), schema).alias('data')).select("data.*")
     print(sel)
 
     return sel
